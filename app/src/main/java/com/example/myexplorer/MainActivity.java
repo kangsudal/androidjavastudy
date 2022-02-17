@@ -3,6 +3,7 @@ package com.example.myexplorer;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -10,6 +11,8 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import java.io.File;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -31,6 +34,12 @@ public class MainActivity extends AppCompatActivity {
         adapter.add("file1");
         adapter.add("file1");
         adapter.notifyDataSetChanged();
+
+        File rootDirectory = Environment.getExternalStorageDirectory(); //외부저장소 최상위파일
+        String rootDirectoryPath = rootDirectory.getPath(); //최상위경로
+
+        pathTextView.setText(rootDirectoryPath);
+
     }
 }
 /*    class FileItemAdapter extends BaseAdapter{
