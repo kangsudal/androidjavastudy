@@ -12,8 +12,10 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.MediaController;
@@ -39,11 +41,11 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        TextView pathTextView= findViewById(R.id.textView);
+        TextView pathTextView = findViewById(R.id.textView);
         Button homeButton = findViewById(R.id.button);
         ListView fileListView = findViewById(R.id.fileListView);
 
-        loadStorage(pathTextView,fileListView);
+        loadStorage(pathTextView, fileListView);
 
         MediaController controller = new MediaController(this);//재생,일시중지같은 버튼이 들어가있는것
         videoView = findViewById(R.id.videoView);
@@ -79,15 +81,15 @@ public class MainActivity extends AppCompatActivity {
 
         File file = new File(root.toString());
 
-        if(file.exists()){
+        if (file.exists()) {
             System.out.println("That file exists! :o");
             System.out.println(file.getPath());
             System.out.println(file.getAbsolutePath());
             System.out.println(file.isFile());
             System.out.println(file.isDirectory());
 
-            if(file.isDirectory()){
-                String filePath = file+"/";
+            if (file.isDirectory()) {
+                String filePath = file + "/";
                 System.out.println(filePath);
                 File clickedDirectory = new File(filePath);
                 System.out.println(clickedDirectory.isDirectory());
@@ -98,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
                     System.out.println(subFiles[i].getAbsolutePath());
                 }
             }
-        }else{
+        } else {
             System.out.println("That file doesn't exist :(");
         }
 
@@ -108,23 +110,23 @@ public class MainActivity extends AppCompatActivity {
         //4 ListView에 리스트 데이터 파일들을 표시
         //5 ListView 중 item이 클릭되면
         //6 Toast & 선택된 item이 디렉토리면 2부터 반복. 화면갱신
-        List<String> data = new ArrayList<>();
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,data);
-
+        FileItemAdapter adapter = new FileItemAdapter();
         fileListView.setAdapter(adapter);
-        adapter.add("file1");
-        adapter.add("file1");
-        adapter.add("file1");
-        adapter.add("file1");
-        adapter.add("file1");
-        data.add("file2");
+
+        adapter.addItem(new File("."));
+        adapter.addItem(new File("testVideoFile.mp3"));
+        adapter.addItem(new File("testVideoFile.mp3"));
+        adapter.addItem(new File("testVideoFile.avi"));
+        adapter.addItem(new File("testVideoFile.mp4"));
+
         adapter.notifyDataSetChanged();
 
         fileListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                String text = adapter.getItem(i);
-                Toast.makeText(getApplicationContext(),"선택:"+text,Toast.LENGTH_SHORT).show();
+                File item = (File) adapter.getItem(i);
+                String text = item.getName();
+                Toast.makeText(getApplicationContext(), "선택:" + text, Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -135,45 +137,56 @@ public class MainActivity extends AppCompatActivity {
 //        startActivity(intent);
     }
 
-    private void checkPermissions(){
+    private void checkPermissions() {
         //권한 보유 여부를 확인하는 코드. 앱에 권한이 있는경우
         if (SDK_INT >= Build.VERSION_CODES.R) { //API30이상일때는
-            if(Environment.isExternalStorageManager()){
-                Toast.makeText(this,"파일 액세스 권한 주어져져 있음", Toast.LENGTH_SHORT).show();
-            }else{
-                Toast.makeText(this,"파일 엑세스 권한 없음.",Toast.LENGTH_SHORT).show();
+            if (Environment.isExternalStorageManager()) {
+                Toast.makeText(this, "파일 액세스 권한 주어져져 있음", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, "파일 엑세스 권한 없음.", Toast.LENGTH_SHORT).show();
                 //MediaStore.Files와 ContentResolver를 이용하여 미디어 파일 접근하는 방식의 코드
             }
-        }else{
+        } else {
             //API29 : legacy Storage 이용?
             //API28 이하:
-            ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.WRITE_EXTERNAL_STORAGE},1);
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
         }
 
 
     }
-}
-/*    class FileItemAdapter extends BaseAdapter{
+
+    class FileItemAdapter extends BaseAdapter {
+        ArrayList<File> items = new ArrayList<File>();
 
         @Override
         public int getCount() {
-            return 0;
+            return items.size();
         }
 
         @Override
         public Object getItem(int i) {
-            return null;
+            return items.get(i);
         }
 
         @Override
         public long getItemId(int i) {
-            return 0;
+            return i;
         }
 
         @Override
         public View getView(int i, View view, ViewGroup viewGroup) {
-            return null;
-            파일인지 디렉토리인지에 따라 색을 바꿔주는 코드 넣기
+            //items에서 데이터를 받아서 내가원하는 View로 포장해준다
+            FileItemView presentedView = new FileItemView(getApplicationContext()); //내부클래스로 정의해서 이렇게 context를 부를수있다 외부 class로 정의할땐?
+            File item = items.get(i);
+            presentedView.setTextViews(item.getName(), item.getPath());
+//            파일인지 디렉토리인지에 따라 색을 바꿔주는 코드 넣기
+            return presentedView;
+        }
+
+        public void addItem(File item) {
+            items.add(item);
         }
     }
-*/
+
+
+}
