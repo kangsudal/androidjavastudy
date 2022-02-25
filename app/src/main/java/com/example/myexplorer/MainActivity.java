@@ -75,9 +75,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void loadStorage(TextView pathTextView, ListView fileListView) {
+        File[] subFiles = null; //외부 저장소에 존재하는 파일들을 저장
 
         //1 외부저장소 최상위 경로를 가져옴
-        File root = Environment.getExternalStorageDirectory(); //외부저장소 최상위파일
+        File root = Environment.getExternalStorageDirectory(); //외부저장소 최상위파일 : /storage/emulated/0
         String rootDirectoryPath = root.getPath(); //최상위경로
 
         File file = new File(root.toString());
@@ -90,13 +91,13 @@ public class MainActivity extends AppCompatActivity {
             System.out.println(file.isDirectory());
 
             if (file.isDirectory()) {
-                String filePath = file + "/";
+                String filePath = file + "/"; ///storage/emulated/0/
                 System.out.println(filePath);
                 File clickedDirectory = new File(filePath);
                 System.out.println(clickedDirectory.isDirectory());
                 System.out.println(clickedDirectory.list());
                 System.out.println(clickedDirectory.listFiles().length);
-                File subFiles[] = clickedDirectory.listFiles();
+                subFiles = clickedDirectory.listFiles(); // storage/emulated/0/ 에 존재하는 파일들 저장
                 for (int i = 0; i < subFiles.length; i++) {
                     System.out.println(subFiles[i].getAbsolutePath());
                 }
@@ -114,11 +115,9 @@ public class MainActivity extends AppCompatActivity {
         FileItemAdapter adapter = new FileItemAdapter();
         fileListView.setAdapter(adapter);
 
-        adapter.addItem(new File("."));
-        adapter.addItem(new File("testVideoFile.mp3"));
-        adapter.addItem(new File("testVideoFile.mp3"));
-        adapter.addItem(new File("testVideoFile.avi"));
-        adapter.addItem(new File("testVideoFile.mp4"));
+        for (int i = 0; i < subFiles.length; i++) {
+            adapter.addItem(new File(subFiles[i].getAbsolutePath())); ///storage/emulated/0/ 에 존재하는 파일들로 리스트뷰 데이터에 적용
+        }
 
         adapter.notifyDataSetChanged();
 
