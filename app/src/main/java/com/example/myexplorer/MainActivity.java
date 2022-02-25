@@ -6,6 +6,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
+import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -14,8 +16,10 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.MediaController;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.VideoView;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -26,6 +30,10 @@ public class MainActivity extends AppCompatActivity {
     private boolean readPermissionGranted = false;
     private boolean writePermissionGranted = false;
 
+    VideoView videoView;
+
+    public static String url = "https://file-examples-com.github.io/uploads/2017/04/file_example_MP4_480_1_5MG.mp4";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,10 +43,31 @@ public class MainActivity extends AppCompatActivity {
         Button homeButton = findViewById(R.id.button);
         ListView fileListView = findViewById(R.id.fileListView);
 
-
-
-
         loadStorage(pathTextView,fileListView);
+
+        MediaController controller = new MediaController(this);//재생,일시중지같은 버튼이 들어가있는것
+        videoView = findViewById(R.id.videoView);
+        videoView.setMediaController(controller);
+        videoView.setVideoURI(Uri.parse(url));//동영상 파일이 있는 위치를 videoView가 확인할 수 있게 됨
+        videoView.requestFocus();//파일을 갖고오게 됨
+
+        //동영상 준비과정이 끝났는지 확인
+        videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+            @Override
+            public void onPrepared(MediaPlayer mediaPlayer) {
+                //준비가 끝나면 실행
+                Toast.makeText(getApplicationContext(), "동영상 준비됨", Toast.LENGTH_LONG);
+            }
+        });
+
+        Button startButton = findViewById(R.id.videoViewStartButton);
+        startButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                videoView.seekTo(0);//동영상 처음위치로
+                videoView.start();
+            }
+        });
 
     }
 
