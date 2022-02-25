@@ -83,6 +83,9 @@ public class MainActivity extends AppCompatActivity {
 
         File file = new File(root.toString());
 
+        //2 현재 경로 표시
+        pathTextView.setText(rootDirectoryPath);
+        //3 현재 경로에 존재하는 모든 파일들을 리스트 데이터로 담음
         if (file.exists()) {
             System.out.println("That file exists! :o");
             System.out.println(file.getPath());
@@ -105,13 +108,7 @@ public class MainActivity extends AppCompatActivity {
         } else {
             System.out.println("That file doesn't exist :(");
         }
-
-        //2 현재 경로 표시
-        pathTextView.setText(rootDirectoryPath);
-        //3 현재 경로에 존재하는 모든 파일들을 리스트 데이터로 담음
         //4 ListView에 리스트 데이터 파일들을 표시
-        //5 ListView 중 item이 클릭되면
-        //6 Toast & 선택된 item이 디렉토리면 2부터 반복. 화면갱신
         FileItemAdapter adapter = new FileItemAdapter();
         fileListView.setAdapter(adapter);
 
@@ -120,6 +117,9 @@ public class MainActivity extends AppCompatActivity {
         }
 
         adapter.notifyDataSetChanged();
+
+        //5 ListView 중 item이 클릭되면
+        //6 Toast & 선택된 item이 디렉토리면 2부터 반복. 화면갱신
 
         fileListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -183,7 +183,7 @@ public class MainActivity extends AppCompatActivity {
             int textColor = Color.BLACK;
             if (item.isDirectory()) {
                 thumbResId = R.drawable.ic_launcher_foreground;
-                textColor = Color.RED;//BLUE
+                textColor = Color.BLUE; //RED
             }
             presentedView.setTextViews(item.getName(), item.getPath(), thumbResId, textColor);
             return presentedView;
