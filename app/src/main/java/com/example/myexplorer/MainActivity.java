@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
+import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
@@ -58,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onPrepared(MediaPlayer mediaPlayer) {
                 //준비가 끝나면 실행
-                Toast.makeText(getApplicationContext(), "동영상 준비됨", Toast.LENGTH_LONG);
+                Toast.makeText(getApplicationContext(), "동영상 준비됨", Toast.LENGTH_LONG).show();
             }
         });
 
@@ -178,8 +179,14 @@ public class MainActivity extends AppCompatActivity {
             //items에서 데이터를 받아서 내가원하는 View로 포장해준다
             FileItemView presentedView = new FileItemView(getApplicationContext()); //내부클래스로 정의해서 이렇게 context를 부를수있다 외부 class로 정의할땐?
             File item = items.get(i);
-            presentedView.setTextViews(item.getName(), item.getPath());
-//            파일인지 디렉토리인지에 따라 색을 바꿔주는 코드 넣기
+//            파일인지 디렉토리인지에 따라 글자색과 썸네일을 바꿔주는 코드
+            int thumbResId = R.drawable.ic_launcher_background;
+            int textColor = Color.BLACK;
+            if (item.isDirectory()) {
+                thumbResId = R.drawable.ic_launcher_foreground;
+                textColor = Color.RED;//BLUE
+            }
+            presentedView.setTextViews(item.getName(), item.getPath(), thumbResId, textColor);
             return presentedView;
         }
 

@@ -27,6 +27,6 @@
             android:layout_height="wrap_content"
             android:text="경로"
             android:textSize="25dp"
-            android:textColor="@color/design_default_color_primary_dark"/>
+            android:textColor="@color/black"/>
     </LinearLayout>
 </LinearLayout>
